@@ -5,3 +5,6 @@
 - browsable api endpoints are at localhost:8000
 
 # api endpoints
+- /addresses/
+- /profiles/
+- /users/
