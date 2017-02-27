@@ -6,5 +6,6 @@
 
 # api endpoints
 - /addresses/
+- /calendars/
 - /profiles/
 - /users/
