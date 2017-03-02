@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic import TemplateView
+from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
 from addresses.views import AddressViewSet
@@ -29,6 +31,8 @@ router.register(r'users', UserViewSet)
 
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
+    url(r'^api/', include(router.urls)),
+    url(r'^obtain-auth-token/', views.obtain_auth_token),
+    url(r'^.*', TemplateView.as_view(template_name='index.html')),
 ]
