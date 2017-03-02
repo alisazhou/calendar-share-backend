@@ -21,13 +21,12 @@ from rest_framework.routers import DefaultRouter
 
 from addresses.views import AddressViewSet
 from calendars.views import CalendarViewSet
-from profiles.views import ProfileViewSet, UserViewSet
+from profiles.views import ProfileViewSet
 
 router = DefaultRouter()
 router.register(r'addresses', AddressViewSet)
 router.register(r'calendars', CalendarViewSet)
 router.register(r'profiles', ProfileViewSet)
-router.register(r'users', UserViewSet)
 
 
 urlpatterns = [

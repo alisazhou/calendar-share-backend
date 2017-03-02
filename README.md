@@ -8,4 +8,3 @@
 - /addresses/
 - /calendars/
 - /profiles/
-- /users/

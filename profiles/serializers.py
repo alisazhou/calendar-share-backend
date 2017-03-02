@@ -5,21 +5,46 @@ from .models import Profile
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    username = serializers.CharField(source='user.username')
+    email = serializers.EmailField(source='user.email')
+    password = serializers.CharField(
+        source='user.password',
+        min_length=6,
+        write_only=True)
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+
 
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ('id', 'username', 'email', 'password', 'first_name',
+            'last_name', 'bday', 'phone', 'url')
 
 
-class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    def create(self, validated_data):
+        user_data = validated_data['user']
+        user = User(**user_data)
+        user.set_password(user_data['password'])
+        user.save()
 
-    class Meta:
-        model = User
-        fields = '__all__'
+        profile = Profile(
+            bday=validated_data['bday'],
+            phone=validated_data['phone'])
+        profile.user = user
+        profile.save()
 
-    def save(self, validated_data):
-        profile_data = validated_data.get('profile')
-        user = User.objects.create(**validated_data.get(user))
-        Profile.objects.create(user=user, **profile_data)
-        return user
+        return profile
+
+
+    def update(self, instance, validated_data):
+        user = instance.user
+        for attr, value in validated_data.get('user', {}).items():
+            setattr(user, attr, value)
+        user.save()
+
+        profile = instance
+        profile.bday = validated_data.get('bday', profile.bday)
+        profile.phone = validated_data.get('phone', profile.phone)
+        profile.save()
+
+        return profile
