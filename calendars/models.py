@@ -13,6 +13,7 @@ class Calendar(models.Model):
         verbose_name='Created by')
     members = models.ManyToManyField(
         Profile,
+        blank=True,
         related_name='calendars_shared',
         verbose_name='Shared with')
 

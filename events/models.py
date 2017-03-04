@@ -18,5 +18,8 @@ class Event(models.Model):
     start_at = models.DateTimeField(verbose_name='Start')
     end_at = models.DateTimeField(verbose_name='End')
     confirmed = models.BooleanField(verbose_name='Confirmed?')
-    location = models.CharField(max_length=100, verbose_name='Location')
-    notes = models.TextField(verbose_name='Notes')
+    location = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name='Location')
+    notes = models.TextField(blank=True, verbose_name='Notes')
