@@ -1,14 +1,16 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from .models import Calendar
+from profiles.models import Profile
 
+
+User = get_user_model()
 
 class CalendarSerializer(serializers.ModelSerializer):
-    owner = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', queryset=User.objects.all())
+    owner = serializers.HyperlinkedRelatedField(view_name='profile-detail', read_only=True)
     members = serializers.HyperlinkedRelatedField(
-        view_name='user-detail', many=True, queryset=User.objects.all())
+        view_name='profile-detail', many=True, queryset=Profile.objects.all())
 
     class Meta:
         model = Calendar

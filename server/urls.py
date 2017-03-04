@@ -32,6 +32,6 @@ router.register(r'profiles', ProfileViewSet)
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^obtain-auth-token/', views.obtain_auth_token),
-    url(r'^.*', TemplateView.as_view(template_name='index.html')),
 ]
