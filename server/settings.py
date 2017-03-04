@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'addresses.apps.AddressesConfig',
+    'events.apps.EventsConfig',
     'calendars.apps.CalendarsConfig',
     'profiles.apps.ProfilesConfig',
 ]
