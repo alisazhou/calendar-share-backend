@@ -5,10 +5,10 @@ from addresses.models import Address
 
 
 class Profile(models.Model):
-    #address = models.OneToOneField(
-    #    Address,
-    #    on_delete=models.CASCADE,
-    #    verbose_name='Address')
+    address = models.OneToOneField(
+        Address,
+        on_delete=models.CASCADE,
+        verbose_name='Address')
     bday = models.DateField(verbose_name='Birthday')
     phone = models.CharField(
         blank=True,

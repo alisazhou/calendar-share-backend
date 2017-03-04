@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Address(models.Model):
-    street_address = models.CharField(max_length=100, verbose_name='Street address')
+    street = models.CharField(max_length=100, verbose_name='Street')
     city = models.CharField(max_length=100, verbose_name='City')
     state = models.CharField(max_length=100, verbose_name='State')
     zipcode = models.CharField(max_length=20, verbose_name='Zipcode')
