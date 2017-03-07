@@ -23,3 +23,12 @@ class Event(models.Model):
         max_length=100,
         verbose_name='Location')
     notes = models.TextField(blank=True, verbose_name='Notes')
+
+    class Meta:
+        ordering = ['-start_at', ]
+
+    def __str__(self):
+        return '{owner}\'s calendar {calendar}: {title}'.format(
+            owner=self.owner.username,
+            calendar=self.calendar.title,
+            title=self.title)
