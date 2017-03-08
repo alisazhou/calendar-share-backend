@@ -21,13 +21,14 @@ from rest_framework.routers import DefaultRouter
 
 from addresses.views import AddressViewSet
 from calendars.views import CalendarViewSet
-from events.views import EventViewSet
+from events.views import FlightViewSet, PlanViewSet
 from profiles.views import ProfileViewSet
 
 router = DefaultRouter()
 router.register(r'addresses', AddressViewSet)
-router.register(r'events', EventViewSet)
 router.register(r'calendars', CalendarViewSet)
+router.register(r'flights', FlightViewSet)
+router.register(r'plans', PlanViewSet)
 router.register(r'profiles', ProfileViewSet)
 
 
