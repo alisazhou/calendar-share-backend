@@ -12,7 +12,7 @@ class CalendarSerializer(serializers.ModelSerializer):
     members = serializers.HyperlinkedRelatedField(
         view_name='profile-detail',
         many=True,
-        queryset=Profile.objects.all())
+        read_only=True)
 
     class Meta:
         model = Calendar
