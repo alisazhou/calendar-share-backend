@@ -1,4 +1,6 @@
-db.sqlite3
 __pycache__
-static
+bundled*
+collected_static
+db.sqlite3
+server/local_settings.py
 templates

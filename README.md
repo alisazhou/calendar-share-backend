@@ -1,13 +1,9 @@
-# setup
-- make sure you are on python 3
-- `$ pip install -r requirements.txt`
-- `$ python manage.py runserver`
-- browsable api endpoints are at localhost:8000/api/
+browsable api endpoints are hosted at [heroku](https://calendar-share-backend.herokuapp.com/api/)
 
 # api endpoints
-- /addresses/
-- /calendars/
-- /flights/
-- /plans/
-- /memberships/
-- /profiles/
+- [addresses](https://calendar-share-backend.herokuapp.com/api/addresses/)
+- [calendars](https://calendar-share-backend.herokuapp.com/api/calendars/)
+- [flights](https://calendar-share-backend.herokuapp.com/api/flights/)
+- [memberships](https://calendar-share-backend.herokuapp.com/api/memberships/)
+- [plans](https://calendar-share-backend.herokuapp.com/api/plans/)
+- [profiles](https://calendar-share-backend.herokuapp.com/api/profiles/)
