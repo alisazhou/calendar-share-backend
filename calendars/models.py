@@ -15,6 +15,7 @@ class Calendar(models.Model):
         Profile,
         blank=True,
         related_name='calendars_shared',
+        through='memberships.Membership',
         verbose_name='Shared with')
 
     def __str__(self):

@@ -7,5 +7,7 @@
 # api endpoints
 - /addresses/
 - /calendars/
-- /events/
+- /flights/
+- /plans/
+- /memberships/
 - /profiles/

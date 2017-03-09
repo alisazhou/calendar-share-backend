@@ -7,12 +7,9 @@ from profiles.models import Profile
 
 class CalendarSerializer(serializers.ModelSerializer):
     owner = serializers.HyperlinkedRelatedField(
-        view_name='profile-detail',
-        read_only=True)
+        view_name='profile-detail', read_only=True)
     members = serializers.HyperlinkedRelatedField(
-        view_name='profile-detail',
-        many=True,
-        queryset=Profile.objects.all())
+        view_name='profile-detail', many=True, read_only=True)
 
     class Meta:
         model = Calendar
