@@ -8,9 +8,10 @@ class Profile(models.Model):
     address = models.OneToOneField(
         Address,
         blank=True,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name='Address')
-    bday = models.DateField(blank=True, verbose_name='Birthday')
+    bday = models.DateField(blank=True, null=True, verbose_name='Birthday')
     phone = models.CharField(
         blank=True,
         max_length=20,
