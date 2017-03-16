@@ -37,18 +37,18 @@ def test_get_address_by_id(client, create_addresses):
 
 
 @pytest.mark.django_db
-def test_post_addresses(client, correct_address1, correct_address2):
-    response1 = client.post('/api/addresses/', correct_address1)
+def test_post_addresses(client, address1, address2):
+    response1 = client.post('/api/addresses/', address1)
     assert response1.status_code == 201
     assert Address.objects.count() == 1
 
-    response2 = client.post('/api/addresses/', correct_address2)
+    response2 = client.post('/api/addresses/', address2)
     assert response2.status_code == 201
     assert Address.objects.count() == 2
 
     address_instances = Address.objects.all()
-    check_address_is_instance(correct_address1, address_instances[0])
-    check_address_is_instance(correct_address2, address_instances[1])
+    check_address_is_instance(address1, address_instances[0])
+    check_address_is_instance(address2, address_instances[1])
 
 
 def test_delete_addresses(client, create_addresses):
