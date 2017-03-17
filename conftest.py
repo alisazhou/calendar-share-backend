@@ -8,15 +8,13 @@ from profiles.models import Profile
 @pytest.fixture
 def normal_user1(django_user_model):
     # create a non-admin user
-    user = django_user_model.objects.create(
-        username='user1', password='qwerty123')
+    user = django_user_model.objects.create(username='user1', password='qwerty123')
     return user
 
 @pytest.fixture
 def normal_user2(django_user_model):
     # create a second non-admin user
-    user = django_user_model.objects.create(
-        username='user2', password='qwerty123')
+    user = django_user_model.objects.create(username='user2', password='qwerty123')
     return user
 
 
@@ -65,8 +63,34 @@ def complete_profile(create_addresses, normal_user1):
     return profile_info
 
 @pytest.fixture
+def complete_profile_for_view():
+    profile_info = {
+        'street': '3 Main St Apt 3',
+        'city': 'New York',
+        'state': 'NY',
+        'zipcode': '10128',
+        'bday': '2017-03-18',
+        'phone': '2121234567',
+        'username': 'user3',
+        'password': 'qwerty123',
+        'email': 'user3@test.com',
+        'first_name': 'first3',
+        'last_name': 'last3'}
+    return profile_info
+
+@pytest.fixture
 def incomplete_profile(normal_user2):
     profile_info = {'user': normal_user2}
+    return profile_info
+
+@pytest.fixture
+def incomplete_profile_for_view():
+    profile_info = {
+        'username': 'user4',
+        'password': 'qwerty123',
+        'email': 'user4@test.com',
+        'first_name': 'first4',
+        'last_name': 'last4'}
     return profile_info
 
 
