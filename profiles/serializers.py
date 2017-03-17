@@ -15,10 +15,10 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         write_only=True)
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
-    street = serializers.CharField(source='address.street')
-    city = serializers.CharField(source='address.city')
-    state = serializers.CharField(source='address.state')
-    zipcode = serializers.CharField(source='address.zipcode')
+    street = serializers.CharField(required=False, source='address.street')
+    city = serializers.CharField(required=False, source='address.city')
+    state = serializers.CharField(required=False, source='address.state')
+    zipcode = serializers.CharField(required=False, source='address.zipcode')
 
 
     class Meta:
@@ -29,19 +29,21 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 
     def create(self, validated_data):
+        profile = Profile(
+            bday=validated_data.get('bday'),
+            phone=validated_data.get('phone'))
+
         user_data = validated_data['user']
         user = User(**user_data)
         user.set_password(user_data['password'])
         user.save()
-
-        address_data = validated_data['address']
-        address = Address.objects.create(**address_data)
-
-        profile = Profile(
-            bday=validated_data['bday'],
-            phone=validated_data['phone'])
-        profile.address = address
         profile.user = user
+
+        address_data = validated_data.get('address')
+        if address_data:
+            address = Address.objects.create(**address_data)
+            profile.address = address
+
         profile.save()
 
         return profile

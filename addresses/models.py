@@ -23,4 +23,4 @@ class Address(models.Model):
         verbose_name_plural = 'addresses'
 
     def __str__(self):
-        return '{}, {}, {} {}'.format(self.street_address, self.city, self.state, self.zipcode)
+        return '{}, {}, {} {}'.format(self.street, self.city, self.state, self.zipcode)

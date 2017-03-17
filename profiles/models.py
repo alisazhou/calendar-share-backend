@@ -15,6 +15,7 @@ class Profile(models.Model):
     phone = models.CharField(
         blank=True,
         max_length=20,
+        null=True,
         unique=True,
         verbose_name='Phone number')
     user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
