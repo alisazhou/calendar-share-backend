@@ -1,0 +1,17 @@
+language: python
+python: "3.6"
+
+services:
+  - postgresql
+
+install:
+  - "pip install -r requirements.txt"
+
+before_script:
+  - psql -c 'create database calendar;' -U postgres
+  - psql -c 'create user alisazhou;' -U postgres
+  - psql -c 'alter user alisazhou createdb;' -U postgres
+
+script:
+  - "pytest"
+  - "flake8"
