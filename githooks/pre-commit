@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+echo "running git pre-commit hooks"
+
+echo "running flake8"
+flake8
+
+RESULT=$?
+
+exit $RESULT
