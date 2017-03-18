@@ -1,17 +1,18 @@
 language: python
-python: "3.6"
-
+python: '3.6'
 services:
-  - postgresql
-
+- postgresql
 install:
-  - "pip install -r requirements.txt"
-
+- pip install -r requirements.txt
 before_script:
-  - psql -c 'create database calendar;' -U postgres
-  - psql -c 'create user alisazhou;' -U postgres
-  - psql -c 'alter user alisazhou createdb;' -U postgres
-
+- psql -c 'create database calendar;' -U postgres
+- psql -c 'create user alisazhou;' -U postgres
+- psql -c 'alter user alisazhou createdb;' -U postgres
 script:
-  - "pytest"
-  - "flake8"
+- pytest
+- flake8
+deploy:
+  provider: heroku
+  api_key:
+    secure: DrPtQqBW6+FVfCDl3beB7jxz6YLyQjN+IMuE+ZJTvI/zBvX6zZKQWiBRnF3Uc3hx4adwt3eiQaepNQTKS1fmgFNywWEzZdfcDd2+wLilmpbNQHdpcnPH/B9x+k1DLkNJ/GbneU2rqwQAN4tidABW/V5RSHm5ZG0sefLpUONZuapUiWmybPC3valGGFClxHP59voyVmeQ2B7MD6DtnDgKPokL0p+TVLsjyXsfb1PxGdv3XHgsIMo7gz62xSBP4lQKlGF0U91vUOuwmno/Ef+bfoQPMeB1GvepdmnzUFqWdZDnudahy2rcjtmnFKZ357YOaUkXR0YIAS3BmX2PXOF1YLo3snPS0ByCE7g/kcBbMKArd2gtzvneKUjdzkbmjgYhzDmM71FIsmHgTCo8ueXlmsDTW5qxcJgDRrZlnn71CYz33tX229XUN3J4/cjCBx17QcPVImByk5J+qPh7OHpJR0Gq4JrXvfoSdj/djKUpasX2MP9MzWZT6ioM01veo+yKLrnzvsA1e66u5tjULP+Xoz3y2QOFK/QM8uJLRcVEbatvf0seTJzoYmDb4Kbs1R8vW5C/8HyV1x5mj0gmXSFU2uhZ81gPjyjFWKfmG5VxIMJ7v8f60mUpkqm6wIKhNvq1GTo8pDk67THSeJvbQAM8Kew8LukZOY65fn3xhB2mG4M=
+  app: calendar-share-backend
