@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 
 from .models import Profile
 from addresses.models import Address
@@ -20,13 +19,11 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     state = serializers.CharField(required=False, source='address.state')
     zipcode = serializers.CharField(required=False, source='address.zipcode')
 
-
     class Meta:
         model = Profile
-        fields = ('id', 'username', 'email', 'password', 'first_name',
-            'last_name', 'bday', 'phone', 'street', 'city', 'state', 'zipcode',
-            'url', )
-
+        fields = (
+            'id', 'username', 'email', 'password', 'first_name', 'last_name',
+            'bday', 'phone', 'street', 'city', 'state', 'zipcode', 'url', )
 
     def create(self, validated_data):
         profile = Profile(
@@ -47,7 +44,6 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         profile.save()
 
         return profile
-
 
     def update(self, instance, validated_data):
         user = instance.user

@@ -3,7 +3,6 @@ import pytest
 from calendars.models import Calendar
 
 
-
 @pytest.fixture
 def calendar1(normal_user1):
     calendar_info = {
@@ -21,7 +20,7 @@ def calendar2(normal_user2):
 
 
 @pytest.fixture
-def create_calendars(calendar1, calendar2):
+def create_calendars(calendar1, calendar2, create_profiles):
     # members is a 'through' field, and is created via Membership instances
     Calendar.objects.create(
         title=calendar1['title'],

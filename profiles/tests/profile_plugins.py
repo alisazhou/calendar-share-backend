@@ -4,7 +4,6 @@ from addresses.models import Address
 from profiles.models import Profile
 
 
-
 @pytest.fixture
 def complete_profile(create_addresses, normal_user1):
     address = Address.objects.all()[0]
@@ -13,6 +12,7 @@ def complete_profile(create_addresses, normal_user1):
     profile_info = {
         'address': address, 'bday': bday, 'phone': phone, 'user': normal_user1}
     return profile_info
+
 
 @pytest.fixture
 def complete_profile_for_view():
@@ -30,10 +30,12 @@ def complete_profile_for_view():
         'last_name': 'last3'}
     return profile_info
 
+
 @pytest.fixture
 def incomplete_profile(normal_user2):
     profile_info = {'user': normal_user2}
     return profile_info
+
 
 @pytest.fixture
 def incomplete_profile_for_view():

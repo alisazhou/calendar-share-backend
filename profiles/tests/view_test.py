@@ -7,6 +7,7 @@ from profiles.models import Profile
 ADDRESS_ATTRS = ('street', 'city', 'state', 'zipcode')
 USER_ATTRS = ('username', 'email', 'first_name', 'last_name')
 
+
 def check_profile_is_instance(profile_dict, profile_instance):
     # check if user matches (required)
     for k in USER_ATTRS:
@@ -17,13 +18,13 @@ def check_profile_is_instance(profile_dict, profile_instance):
             assert profile_dict[k] == getattr(profile_instance.address, k)
     else:
         for k in ADDRESS_ATTRS:
-            assert profile_dict[k] == None
+            assert profile_dict[k] is None
     # check if other fields match
     if profile_instance.bday:
         bday_str = '{:%Y-%m-%d}'.format(profile_instance.bday)
         assert profile_dict['bday'] == bday_str
     else:
-        assert profile_dict['bday'] == None
+        assert profile_dict['bday'] is None
     assert profile_dict['phone'] == getattr(profile_instance, 'phone', None)
 
 
@@ -77,21 +78,15 @@ def test_delete_profiles(client, create_profiles):
 
 def test_patch_profile(client, create_profiles):
     # Changing profile1 existing field
-    response1 = client.patch(
-        '/api/profiles/1/',
-        data=json.dumps({'phone': '9177654321'}),
-        content_type='application/json')
+    client.patch('/api/profiles/1/', data=json.dumps({'phone': '9177654321'}), content_type='application/json')
     profile1 = Profile.objects.first()
     assert profile1.phone == '9177654321'
     # check that other fields remain the same
     assert '{:%Y-%m-%d}'.format(profile1.bday) == '2017-03-17'
 
     # Changing profile2 currently empty field
-    response2 = client.patch(
-        '/api/profiles/2/',
-        data=json.dumps({'phone': '9491234567'}),
-        content_type='application/json')
+    client.patch('/api/profiles/2/', data=json.dumps({'phone': '9491234567'}), content_type='application/json')
     profile2 = Profile.objects.all()[1]
     assert profile2.phone == '9491234567'
     # check that other fields remain empty
-    assert profile2.bday == None
+    assert profile2.bday is None

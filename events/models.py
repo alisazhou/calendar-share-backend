@@ -25,7 +25,6 @@ class AbstractEvent(models.Model):
         ordering = ['-start_at', ]
 
 
-
 class Flight(AbstractEvent):
     departure = models.CharField(max_length=20, verbose_name='Departure airport')
     arrival = models.CharField(max_length=20, verbose_name='Arrival airport')
@@ -35,7 +34,6 @@ class Flight(AbstractEvent):
     def __str__(self):
         return '{title} from {departure} to {arrival}'.format(
             title=self.title, departure=self.departure, arrival=self.arrival)
-
 
 
 class Plan(AbstractEvent):

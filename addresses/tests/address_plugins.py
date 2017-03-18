@@ -3,7 +3,6 @@ import pytest
 from addresses.models import Address
 
 
-
 @pytest.fixture
 def address1():
     street = '1 Main Street Apt 1'
@@ -12,6 +11,7 @@ def address1():
     zipcode = '11215'
     address = {'street': street, 'city': city, 'state': state, 'zipcode': zipcode}
     return address
+
 
 @pytest.fixture
 def address2():

@@ -3,7 +3,6 @@ import pytest
 from addresses.models import Address
 
 
-
 @pytest.mark.django_db
 def test_can_save_and_retrieve_addresses(address1, address2, create_addresses):
     saved_addresses = Address.objects.all()

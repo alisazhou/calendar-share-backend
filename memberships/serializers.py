@@ -4,7 +4,6 @@ from rest_framework.validators import UniqueTogetherValidator
 from .models import Membership
 
 
-
 class MembershipSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Membership

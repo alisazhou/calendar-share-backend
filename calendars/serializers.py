@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from .models import Calendar
-from profiles.models import Profile
 
 
 class CalendarSerializer(serializers.ModelSerializer):

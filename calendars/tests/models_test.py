@@ -1,9 +1,6 @@
-import pytest
-
 from calendars.models import Calendar
 from memberships.models import Membership
 from profiles.models import Profile
-
 
 
 def test_can_save_and_retrieve_calendars(calendar1, calendar2, create_calendars):

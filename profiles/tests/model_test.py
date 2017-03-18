@@ -1,9 +1,7 @@
 from django.db.utils import IntegrityError
 import pytest
 
-from addresses.models import Address
 from profiles.models import Profile
-
 
 
 @pytest.mark.django_db
