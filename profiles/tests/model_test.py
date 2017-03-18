@@ -2,6 +2,7 @@ from django.db.utils import IntegrityError
 import pytest
 
 from profiles.models import Profile
+from addresses.models import Address
 
 
 @pytest.mark.django_db
@@ -12,7 +13,8 @@ def test_can_save_and_retrieve_profiles(
 
     # complete_profile, created with address1, normal_user1
     saved_profile1 = saved_profiles[0]
-    assert saved_profile1.address_id == 1
+    address1 = Address.objects.first()
+    assert saved_profile1.address_id == address1.id
     bday_str = '{:%Y-%m-%d}'.format(saved_profile1.bday)
     assert bday_str == complete_profile['bday']
     assert saved_profile1.phone == complete_profile['phone']

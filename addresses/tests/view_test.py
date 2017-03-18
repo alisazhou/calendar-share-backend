@@ -22,17 +22,17 @@ def test_get_addresses_list(client, create_addresses):
 
 
 def test_get_address_by_id(client, create_addresses):
-    address_instances = Address.objects.all()
+    address1, address2 = Address.objects.all()
 
-    response1 = client.get('/api/addresses/1/')
+    response1 = client.get('/api/addresses/{}/'.format(address1.id))
     assert response1.status_code == 200
     address1_json = json.loads(response1.content.decode())
-    check_address_is_instance(address1_json, address_instances[0])
+    check_address_is_instance(address1_json, address1)
 
-    response2 = client.get('/api/addresses/2/')
+    response2 = client.get('/api/addresses/{}/'.format(address2.id))
     assert response2.status_code == 200
     address2_json = json.loads(response2.content.decode())
-    check_address_is_instance(address2_json, address_instances[1])
+    check_address_is_instance(address2_json, address2)
 
 
 @pytest.mark.django_db
@@ -51,18 +51,22 @@ def test_post_addresses(client, address1, address2):
 
 
 def test_delete_addresses(client, create_addresses):
-    response1 = client.delete('/api/addresses/1/')
+    address1, address2 = Address.objects.all()
+
+    response1 = client.delete('/api/addresses/{}/'.format(address1.id))
     assert response1.status_code == 204
     assert Address.objects.count() == 1
 
-    response2 = client.delete('/api/addresses/2/')
+    response2 = client.delete('/api/addresses/{}/'.format(address2.id))
     assert response2.status_code == 204
     assert Address.objects.count() == 0
 
 
 def test_patch_address(client, create_addresses):
+    address1 = Address.objects.first()
+
     response = client.patch(
-        '/api/addresses/1/',
+        '/api/addresses/{}/'.format(address1.id),
         data=json.dumps({'city': 'New York'}),
         content_type='application/json')
     assert response.status_code == 200

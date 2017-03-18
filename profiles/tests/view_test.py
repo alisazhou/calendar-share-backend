@@ -43,12 +43,12 @@ def test_get_profiles_list(client, create_profiles):
 def test_get_profile_by_id(client, create_profiles):
     profile1, profile2 = Profile.objects.all()
 
-    response1 = client.get('/api/profiles/1/')
+    response1 = client.get('/api/profiles/{}/'.format(profile1.id))
     assert response1.status_code == 200
     profile_json1 = json.loads(response1.content.decode())
     check_profile_is_instance(profile_json1, profile1)
 
-    response2 = client.get('/api/profiles/2/')
+    response2 = client.get('/api/profiles/{}/'.format(profile2.id))
     assert response2.status_code == 200
     profile_json2 = json.loads(response2.content.decode())
     check_profile_is_instance(profile_json2, profile2)
@@ -67,25 +67,35 @@ def test_post_profiles(
 
 
 def test_delete_profiles(client, create_profiles):
-    response1 = client.delete('/api/profiles/1/')
+    profile1, profile2 = Profile.objects.all()
+
+    response1 = client.delete('/api/profiles/{}/'.format(profile1.id))
     assert response1.status_code == 204
     assert Profile.objects.count() == 1
 
-    response2 = client.delete('/api/profiles/2/')
+    response2 = client.delete('/api/profiles/{}/'.format(profile2.id))
     assert response2.status_code == 204
     assert Profile.objects.count() == 0
 
 
 def test_patch_profile(client, create_profiles):
+    profile1, profile2 = Profile.objects.all()
+
     # Changing profile1 existing field
-    client.patch('/api/profiles/1/', data=json.dumps({'phone': '9177654321'}), content_type='application/json')
+    client.patch(
+        '/api/profiles/{}/'.format(profile1.id),
+        data=json.dumps({'phone': '9177654321'}),
+        content_type='application/json')
     profile1 = Profile.objects.first()
     assert profile1.phone == '9177654321'
     # check that other fields remain the same
     assert '{:%Y-%m-%d}'.format(profile1.bday) == '2017-03-17'
 
     # Changing profile2 currently empty field
-    client.patch('/api/profiles/2/', data=json.dumps({'phone': '9491234567'}), content_type='application/json')
+    client.patch(
+        '/api/profiles/{}/'.format(profile2.id),
+        data=json.dumps({'phone': '9491234567'}),
+        content_type='application/json')
     profile2 = Profile.objects.all()[1]
     assert profile2.phone == '9491234567'
     # check that other fields remain empty
