@@ -1,5 +1,6 @@
 pytest_plugins = [
     'addresses.tests.address_plugins',
+    'calendars.tests.calendar_plugins',
     'profiles.tests.profile_plugins']
 
 import pytest
