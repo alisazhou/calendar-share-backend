@@ -28,8 +28,8 @@ class AbstractEvent(models.Model):
 class Flight(AbstractEvent):
     departure = models.CharField(max_length=20, verbose_name='Departure airport')
     arrival = models.CharField(max_length=20, verbose_name='Arrival airport')
-    airline = models.CharField(max_length=20, blank=True, verbose_name='Airline')
-    flight_no = models.IntegerField(blank=True, verbose_name='Flight number')
+    airline = models.CharField(max_length=20, blank=True, null=True, verbose_name='Airline')
+    flight_no = models.IntegerField(blank=True, null=True, verbose_name='Flight number')
 
     def __str__(self):
         return '{title} from {departure} to {arrival}'.format(

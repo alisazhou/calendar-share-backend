@@ -4,6 +4,7 @@ import pytest
 pytest_plugins = [
     'addresses.tests.address_plugins',
     'calendars.tests.calendar_plugins',
+    'events.tests.event_plugins',
     'memberships.tests.membership_plugins',
     'profiles.tests.profile_plugins']
 
