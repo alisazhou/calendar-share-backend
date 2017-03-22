@@ -23,6 +23,12 @@ def check_flight_is_instance(flight_dict, flight_instance):
         assert getattr(flight_instance, k) == v
 
 
+def get_response_non_field_errors(response):
+    errs = json.loads(response.content.decode())
+    non_field_errors = errs.get('non_field_errors')
+    return non_field_errors
+
+
 def test_get_flights_list(client, create_flights):
     response = client.get('/api/flights/')
     assert response.status_code == 200
@@ -86,3 +92,81 @@ def test_patch_flights(client, create_flights):
     assert flight1.title != orig_title
     # check title has not changed
     assert flight1.owner == orig_owner
+
+
+def test_start_cannot_be_after_end(client, flight2_for_view):
+    # change flight2 start_at to be after end_at
+    flight2_for_view['start_at'] = '2017-03-20 04:00'
+    response = client.post('/api/flights/', data=flight2_for_view)
+    assert response.status_code == 400
+    non_field_errors = get_response_non_field_errors(response)
+    assert 'End time must come after start.' in non_field_errors
+
+
+def test_must_have_airline_and_flight_no_on_post_if_confirmed(admin_client, flight2_for_view):
+    # change flight2 confirmed to True with no airline, results in error
+    flight2_for_view['confirmed'] = True
+    response = admin_client.post('/api/flights/', data=flight2_for_view)
+    assert response.status_code == 400
+    non_field_errors = get_response_non_field_errors(response)
+    assert 'Airline is required' in non_field_errors
+    assert Flight.objects.count() == 0
+
+    # add airline to confirmed_flight, results in error re flight_no
+    flight2_for_view['airline'] = 'jetblue'
+    response = admin_client.post('/api/flights/', data=flight2_for_view)
+    assert response.status_code == 400
+    non_field_errors = get_response_non_field_errors(response)
+    assert 'Flight number is required' in non_field_errors
+    assert Flight.objects.count() == 0
+
+    # add flight_no to confirmed_flight, no more errors
+    flight2_for_view['flight_no'] = 1415
+    response = admin_client.post('/api/flights/', data=flight2_for_view)
+    assert response.status_code == 201
+    assert Flight.objects.count() == 1
+
+
+def test_must_have_airline_and_flight_no_on_patch_if_confirmed(
+        admin_client, flight1_for_view, flight2_for_view):
+    # create an unconfirmed flight1 with airline and flight_no
+    flight1_for_view['confirmed'] = False
+    admin_client.post('/api/flights/', data=flight1_for_view)
+    flight1_id = Flight.objects.first().id
+
+    # confirm flight1, no need for airline and flight_no
+    response1 = admin_client.patch(
+        '/api/flights/{}/'.format(flight1_id),
+        data=json.dumps({'confirmed': True}),
+        content_type='application/json')
+    assert response1.status_code == 200
+
+    # create an unconfirmed flight2 with no airline and flight_no
+    admin_client.post('/api/flights/', data=flight2_for_view)
+    flight2_id = Flight.objects.get(title='flight 2').id
+
+    # confirm flight2, need airline and flight_no
+    flight2_for_view['confirmed'] = True
+    response2 = admin_client.patch(
+        '/api/flights/{}/'.format(flight2_id),
+        data=json.dumps(flight2_for_view),
+        content_type='application/json')
+    assert response2.status_code == 400
+    non_field_errors = get_response_non_field_errors(response2)
+    assert 'Airline is required' in non_field_errors
+
+    flight2_for_view['airline'] = 'jetblue'
+    response2 = admin_client.patch(
+        '/api/flights/{}/'.format(flight2_id),
+        data=json.dumps(flight2_for_view),
+        content_type='application/json')
+    assert response2.status_code == 400
+    non_field_errors = get_response_non_field_errors(response2)
+    assert 'Flight number is required' in non_field_errors
+
+    flight2_for_view['flight_no'] = 1415
+    response2 = admin_client.patch(
+        '/api/flights/{}/'.format(flight2_id),
+        data=json.dumps(flight2_for_view),
+        content_type='application/json')
+    assert response2.status_code == 200

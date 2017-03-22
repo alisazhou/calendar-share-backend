@@ -19,9 +19,9 @@ class FlightSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError('End time must come after start.')
         if data.get('confirmed') is True:
             # if confirmed, must provide airline and flight no
-            if not (data.get('airline') or getattr(self, 'airline', False)):
+            if not (data.get('airline') or getattr(self.instance, 'airline', False)):
                 raise serializers.ValidationError('Airline is required')
-            if not (data.get('flight_no') or getattr(self, 'flight_no', False)):
+            if not (data.get('flight_no') or getattr(self.instance, 'flight_no', False)):
                 raise serializers.ValidationError('Flight number is required')
 
         # .validate() method must return validated data
