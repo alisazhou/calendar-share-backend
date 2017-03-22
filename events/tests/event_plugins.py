@@ -9,12 +9,30 @@ def check_date_time_object_and_str_are_the_same(dt_obj, dt_str):
     assert '{:%H:%M}'.format(dt_obj) in dt_str
 
 
-def check_event_is_instance(evt_dict, evt_ins):
+def check_evt_owner_instance_corresponds_to_serialized_url(evt_ins, url):
+    owner_id = evt_ins.owner.id
+    assert '/api/profiles/{}/'.format(owner_id) in url
+
+
+def check_evt_calendar_instance_corresponds_to_serialized_url(evt_ins, url):
+    calendar_id = evt_ins.calendar.id
+    assert '/api/calendars/{}/'.format(calendar_id) in url
+
+
+def check_event_is_instance(evt_dict, evt_ins, serialized=False):
     # check start and end times are the same
     start_at = evt_dict.pop('start_at')
     check_date_time_object_and_str_are_the_same(evt_ins.start_at, start_at)
     end_at = evt_dict.pop('end_at')
     check_date_time_object_and_str_are_the_same(evt_ins.end_at, end_at)
+
+    # if evt_dict is the serialized json, not the fixture dict, FK and MTM
+    # are serialized as urls
+    if serialized:
+        owner_url = evt_dict.pop('owner')
+        check_evt_owner_instance_corresponds_to_serialized_url(evt_ins, owner_url)
+        cal_url = evt_dict.pop('calendar')
+        check_evt_calendar_instance_corresponds_to_serialized_url(evt_ins, cal_url)
 
     # check the rest of the fields
     for k, v in evt_dict.items():

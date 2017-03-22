@@ -1,26 +1,7 @@
 import json
 
 from events.models import Flight
-from events.tests.event_plugins import check_date_time_object_and_str_are_the_same
-
-
-def check_flight_is_instance(flight_dict, flight_instance):
-    # check owner is the same as the serialized profile url
-    owner_url = flight_dict.pop('owner')
-    assert '/api/profiles/{}/'.format(flight_instance.owner.id) in owner_url
-
-    # check calendar is the same as the serialized calendar url
-    cal_url = flight_dict.pop('calendar')
-    assert '/api/calendars/{}/'.format(flight_instance.calendar.id) in cal_url
-
-    # check start and end times are the same as the serialized strings
-    start_at = flight_dict.pop('start_at')
-    check_date_time_object_and_str_are_the_same(flight_instance.start_at, start_at)
-    end_at = flight_dict.pop('end_at')
-    check_date_time_object_and_str_are_the_same(flight_instance.end_at, end_at)
-
-    for k, v in flight_dict.items():
-        assert getattr(flight_instance, k) == v
+from events.tests.event_plugins import check_event_is_instance
 
 
 def get_response_non_field_errors(response):
@@ -39,7 +20,7 @@ def test_get_flights_list(client, create_flights):
     for flight_dict in flights_json:
         flight_title = flight_dict['title']
         flight_instance = Flight.objects.get(title=flight_title)
-        check_flight_is_instance(flight_dict, flight_instance)
+        check_event_is_instance(flight_dict, flight_instance, serialized=True)
 
 
 def test_get_flight_by_id(client, create_flights):
@@ -48,12 +29,12 @@ def test_get_flight_by_id(client, create_flights):
     response1 = client.get('/api/flights/{}/'.format(flight1.id))
     assert response1.status_code == 200
     flight_json1 = json.loads(response1.content.decode())
-    check_flight_is_instance(flight_json1, flight1)
+    check_event_is_instance(flight_json1, flight1, serialized=True)
 
     response2 = client.get('/api/flights/{}/'.format(flight2.id))
     assert response2.status_code == 200
     flight_json2 = json.loads(response2.content.decode())
-    check_flight_is_instance(flight_json2, flight2)
+    check_event_is_instance(flight_json2, flight2, serialized=True)
 
 
 def test_post_flights(admin_client, flight1_for_view, flight2_for_view):
