@@ -10,16 +10,22 @@ class FlightSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Flight
-        fields = '__all__'
+        fields = (
+            'title', 'owner', 'calendar', 'start_at', 'end_at', 'confirmed',
+            'notes', 'departure', 'arrival', 'airline', 'flight_no')
 
     def validate(self, data):
-        if data['start_at'] > data['end_at']:
+        if data.get('start_at', 0) > data.get('end_at', 1):
             raise serializers.ValidationError('End time must come after start.')
-        elif data['confirmed'] is True:
-            if not data['airline']:
+        if data.get('confirmed') is True:
+            # if confirmed, must provide airline and flight no
+            if not (data.get('airline') or getattr(self, 'airline', False)):
                 raise serializers.ValidationError('Airline is required')
-            if not data['flight_no']:
+            if not (data.get('flight_no') or getattr(self, 'flight_no', False)):
                 raise serializers.ValidationError('Flight number is required')
+
+        # .validate() method must return validated data
+        return data
 
 
 class PlanSerializer(serializers.HyperlinkedModelSerializer):

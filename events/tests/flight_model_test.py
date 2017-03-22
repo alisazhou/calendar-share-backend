@@ -1,12 +1,13 @@
 from events.models import Flight
+from events.tests.event_plugins import check_date_time_object_and_str_are_the_same
 
 
 def check_flight_is_instance(flight_dict, flight_instance):
     # check start and end times are the same
     start_at = flight_dict.pop('start_at')
-    assert '{:%Y-%m-%d %H:%M}'.format(flight_instance.start_at) == start_at
+    check_date_time_object_and_str_are_the_same(flight_instance.start_at, start_at)
     end_at = flight_dict.pop('end_at')
-    assert '{:%Y-%m-%d %H:%M}'.format(flight_instance.end_at) == end_at
+    check_date_time_object_and_str_are_the_same(flight_instance.end_at, end_at)
 
     # check the rest of the fields
     for k, v in flight_dict.items():
