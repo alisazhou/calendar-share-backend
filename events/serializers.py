@@ -35,9 +35,12 @@ class PlanSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Plan
-        fields = '__all__'
+        fields = (
+            'title', 'owner', 'calendar', 'start_at', 'end_at', 'confirmed',
+            'notes', 'location')
 
     def validate(self, data):
+        # if current post/patch data has event time
         if data.get('start_at', 0) > data.get('end_at', 1):
             raise serializers.ValidationError('End time must come after start.')
         return data

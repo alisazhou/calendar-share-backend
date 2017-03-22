@@ -1,13 +1,7 @@
 import json
 
 from events.models import Flight
-from events.tests.event_plugins import check_event_is_instance
-
-
-def get_response_non_field_errors(response):
-    errs = json.loads(response.content.decode())
-    non_field_errors = errs.get('non_field_errors')
-    return non_field_errors
+from events.tests.event_plugins import check_event_is_instance, get_response_non_field_errors
 
 
 def test_get_flights_list(client, create_flights):

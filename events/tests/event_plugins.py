@@ -1,3 +1,4 @@
+import json
 import pytest
 
 from calendars.models import Calendar
@@ -17,6 +18,12 @@ def check_evt_owner_instance_corresponds_to_serialized_url(evt_ins, url):
 def check_evt_calendar_instance_corresponds_to_serialized_url(evt_ins, url):
     calendar_id = evt_ins.calendar.id
     assert '/api/calendars/{}/'.format(calendar_id) in url
+
+
+def get_response_non_field_errors(response):
+    errs = json.loads(response.content.decode())
+    non_field_errors = errs.get('non_field_errors')
+    return non_field_errors
 
 
 def check_event_is_instance(evt_dict, evt_ins, serialized=False):
@@ -102,6 +109,15 @@ def plan1(normal_user1, create_calendars):
 
 
 @pytest.fixture
+def plan1_for_view(plan1):
+    owner_id = plan1['owner'].id
+    plan1['owner'] = '/api/profiles/{}/'.format(owner_id)
+    cal1_id = plan1['calendar'].id
+    plan1['calendar'] = '/api/calendars/{}/'.format(cal1_id)
+    return plan1
+
+
+@pytest.fixture
 def plan2(normal_user2, create_calendars):
     cal2 = Calendar.objects.first()
     plan_info = {
@@ -109,6 +125,15 @@ def plan2(normal_user2, create_calendars):
         'start_at': '2017-04-19 02:00', 'end_at': '2017-04-20 03:00',
         'confirmed': False}
     return plan_info
+
+
+@pytest.fixture
+def plan2_for_view(plan2):
+    owner_id = plan2['owner'].id
+    plan2['owner'] = '/api/profiles/{}/'.format(owner_id)
+    cal2_id = plan2['calendar'].id
+    plan2['calendar'] = '/api/calendars/{}/'.format(cal2_id)
+    return plan2
 
 
 @pytest.fixture
