@@ -31,14 +31,23 @@ def test_get_plan_by_id(client, create_plans):
     check_event_is_instance(plan2_json, plan2, serialized=True)
 
 
-def test_post_plans(admin_client, plan1_for_view, plan2_for_view):
-    response1 = admin_client.post('/api/plans/', plan1_for_view)
+def test_post_plans(client, plan1_for_view, plan2_for_view):
+    client.login(username='user1', password='qwerty123')
+    response1 = client.post('/api/plans/', plan1_for_view)
     assert response1.status_code == 201
     assert Plan.objects.count() == 1
+    # check plan1's owner is normal_user1
+    plan1 = Plan.objects.get(title='plan 1')
+    assert plan1.owner.username == 'user1'
 
-    response2 = admin_client.post('/api/plans/', plan2_for_view)
+    client.logout()
+    client.login(username='user2', password='qwerty123')
+    response2 = client.post('/api/plans/', plan2_for_view)
     assert response2.status_code == 201
     assert Plan.objects.count() == 2
+    # check plan2's owner is normal_user2
+    plan2 = Plan.objects.get(title='plan 2')
+    assert plan2.owner.username == 'user2'
 
 
 def test_delete_plans(client, create_plans):

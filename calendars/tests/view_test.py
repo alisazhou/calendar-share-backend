@@ -44,15 +44,19 @@ def test_get_calendar_by_id(client, create_calendars):
     check_calendar_is_instance(cal_json2, cal2)
 
 
-def test_post_calendars(admin_client):
+def test_post_calendars(client, create_profiles):
     cal3_info = {'title': 'calendar 3 for view'}
+    client.login(username='user1', password='qwerty123')
     # view captures the logged-in user creating this calendar as its owner
-    response1 = admin_client.post('/api/calendars/', cal3_info)
+    response1 = client.post('/api/calendars/', cal3_info)
     assert response1.status_code == 201
     assert Calendar.objects.count() == 1
 
     cal4_info = {'title': 'calendar 4 for view'}
-    response2 = admin_client.post('/api/calendars/', cal4_info)
+    client.logout()
+    client.login(username='user2', password='qwerty123')
+    cal4_info = {'title': 'calendar 4 for view', 'owner_color_hex': 'FFFFFF'}
+    response2 = client.post('/api/calendars/', cal4_info)
     assert response2.status_code == 201
     assert Calendar.objects.count() == 2
 

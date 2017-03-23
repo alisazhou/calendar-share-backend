@@ -12,12 +12,16 @@ pytest_plugins = [
 @pytest.fixture
 def normal_user1(django_user_model):
     # create a non-admin user
-    user = django_user_model.objects.create(username='user1', password='qwerty123')
+    user = django_user_model(username='user1')
+    user.set_password('qwerty123')
+    user.save()
     return user
 
 
 @pytest.fixture
 def normal_user2(django_user_model):
     # create a second non-admin user
-    user = django_user_model.objects.create(username='user2', password='qwerty123')
+    user = django_user_model(username='user2')
+    user.set_password('qwerty123')
+    user.save()
     return user
