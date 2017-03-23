@@ -2,6 +2,7 @@ import json
 import re
 
 from calendars.models import Calendar
+from memberships.models import Membership
 from profiles.models import Profile
 
 
@@ -45,20 +46,27 @@ def test_get_calendar_by_id(client, create_calendars):
 
 
 def test_post_calendars(client, create_profiles):
-    cal3_info = {'title': 'calendar 3 for view'}
     client.login(username='user1', password='qwerty123')
+    cal3_info = {'title': 'calendar 3 for view', 'owner_color_hex': '000000'}
     # view captures the logged-in user creating this calendar as its owner
     response1 = client.post('/api/calendars/', cal3_info)
     assert response1.status_code == 201
     assert Calendar.objects.count() == 1
+    # a membership of owner and calendar is auto saved
+    mbship1 = Membership.objects.get(color_hex='000000')
+    assert mbship1.calendar.title == 'calendar 3 for view'
+    assert mbship1.member.user.username == 'user1'
 
-    cal4_info = {'title': 'calendar 4 for view'}
     client.logout()
     client.login(username='user2', password='qwerty123')
     cal4_info = {'title': 'calendar 4 for view', 'owner_color_hex': 'FFFFFF'}
     response2 = client.post('/api/calendars/', cal4_info)
     assert response2.status_code == 201
     assert Calendar.objects.count() == 2
+    # a membership of owner and calendar is auto saved
+    mbship2 = Membership.objects.get(color_hex='FFFFFF')
+    assert mbship2.calendar.title == 'calendar 4 for view'
+    assert mbship2.member.user.username == 'user2'
 
 
 def test_delete_calendars(client, create_calendars):
