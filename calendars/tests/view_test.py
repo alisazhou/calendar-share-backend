@@ -55,7 +55,7 @@ def test_post_calendars(client, create_profiles):
     # a membership of owner and calendar is auto saved
     mbship1 = Membership.objects.get(color_hex='000000')
     assert mbship1.calendar.title == 'calendar 3 for view'
-    assert mbship1.member.user.username == 'user1'
+    assert mbship1.member.username == 'user1'
 
     client.logout()
     client.login(username='user2', password='qwerty123')
@@ -66,7 +66,7 @@ def test_post_calendars(client, create_profiles):
     # a membership of owner and calendar is auto saved
     mbship2 = Membership.objects.get(color_hex='FFFFFF')
     assert mbship2.calendar.title == 'calendar 4 for view'
-    assert mbship2.member.user.username == 'user2'
+    assert mbship2.member.username == 'user2'
 
 
 def test_delete_calendars(client, create_calendars):
@@ -79,7 +79,7 @@ def test_delete_calendars(client, create_calendars):
     assert Calendar.objects.count() == 0
 
 
-def test_patch_address(client, create_calendars):
+def test_patch_calendars(client, create_calendars):
     cal1 = Calendar.objects.first()
     orig_owner = cal1.owner
 

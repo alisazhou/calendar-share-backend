@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-from profiles.models import Profile
-
 
 class Calendar(models.Model):
     title = models.CharField(max_length=100, verbose_name='Title')
@@ -12,7 +10,7 @@ class Calendar(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Created by')
     members = models.ManyToManyField(
-        Profile,
+        settings.AUTH_USER_MODEL,
         blank=True,
         related_name='calendars_shared',
         through='memberships.Membership',
