@@ -11,8 +11,8 @@ class Address(models.Model):
         blank=True, max_length=100, verbose_name='State')
     zipcode = models.CharField(
         blank=True, max_length=20, verbose_name='Zipcode')
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Owner')
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE, verbose_name='Owner')
 
     class Meta:
         verbose_name_plural = 'addresses'

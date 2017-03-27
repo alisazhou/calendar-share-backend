@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.views.generic import TemplateView
 from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
@@ -26,12 +25,12 @@ from memberships.views import MembershipViewSet
 from profiles.views import ProfileViewSet
 
 router = DefaultRouter()
-router.register(r'addresses', AddressViewSet)
+router.register(r'addresses', AddressViewSet, 'address')
 router.register(r'calendars', CalendarViewSet)
 router.register(r'flights', FlightViewSet)
 router.register(r'memberships', MembershipViewSet)
 router.register(r'plans', PlanViewSet)
-router.register(r'profiles', ProfileViewSet)
+router.register(r'profiles', ProfileViewSet, 'profile')
 
 
 urlpatterns = [
