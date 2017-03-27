@@ -3,15 +3,13 @@ import re
 
 from calendars.models import Calendar
 from memberships.models import Membership
-from profiles.models import Profile
 
 
 def check_calendar_is_instance(cal_dict, cal_instance):
     assert cal_dict['title'] == cal_instance.title
 
     # owner is serialized as user's profile url
-    owner_profile = Profile.objects.get(user_id=cal_instance.owner.id)
-    assert '/api/profiles/{}/'.format(owner_profile.id) in cal_dict['owner']
+    assert '/api/profiles/{}/'.format(cal_instance.owner.id) in cal_dict['owner']
 
     # members are each serialized as profile url
     for member in cal_instance.members.all():

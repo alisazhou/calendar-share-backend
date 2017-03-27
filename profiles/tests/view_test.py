@@ -4,7 +4,6 @@ import pytest
 from profiles.models import Profile
 
 
-ADDRESS_ATTRS = ('street', 'city', 'state', 'zipcode')
 USER_ATTRS = ('username', 'email', 'first_name', 'last_name')
 
 
@@ -12,13 +11,7 @@ def check_profile_is_instance(profile_dict, profile_instance):
     # check if user matches (required)
     for k in USER_ATTRS:
         assert profile_dict[k] == getattr(profile_instance.user, k)
-    # check if address matches
-    if profile_instance.address:
-        for k in ADDRESS_ATTRS:
-            assert profile_dict[k] == getattr(profile_instance.address, k)
-    else:
-        for k in ADDRESS_ATTRS:
-            assert profile_dict[k] is None
+
     # check if other fields match
     if profile_instance.bday:
         bday_str = '{:%Y-%m-%d}'.format(profile_instance.bday)
@@ -43,12 +36,12 @@ def test_get_profiles_list(client, create_profiles):
 def test_get_profile_by_id(client, create_profiles):
     profile1, profile2 = Profile.objects.all()
 
-    response1 = client.get('/api/profiles/{}/'.format(profile1.id))
+    response1 = client.get('/api/profiles/{}/'.format(profile1.user_id))
     assert response1.status_code == 200
     profile_json1 = json.loads(response1.content.decode())
     check_profile_is_instance(profile_json1, profile1)
 
-    response2 = client.get('/api/profiles/{}/'.format(profile2.id))
+    response2 = client.get('/api/profiles/{}/'.format(profile2.user_id))
     assert response2.status_code == 200
     profile_json2 = json.loads(response2.content.decode())
     check_profile_is_instance(profile_json2, profile2)
@@ -69,11 +62,11 @@ def test_post_profiles(
 def test_delete_profiles(client, create_profiles):
     profile1, profile2 = Profile.objects.all()
 
-    response1 = client.delete('/api/profiles/{}/'.format(profile1.id))
+    response1 = client.delete('/api/profiles/{}/'.format(profile1.user_id))
     assert response1.status_code == 204
     assert Profile.objects.count() == 1
 
-    response2 = client.delete('/api/profiles/{}/'.format(profile2.id))
+    response2 = client.delete('/api/profiles/{}/'.format(profile2.user_id))
     assert response2.status_code == 204
     assert Profile.objects.count() == 0
 
@@ -83,7 +76,7 @@ def test_patch_profile(client, create_profiles):
 
     # Changing profile1 existing field
     client.patch(
-        '/api/profiles/{}/'.format(profile1.id),
+        '/api/profiles/{}/'.format(profile1.user_id),
         data=json.dumps({'phone': '9177654321'}),
         content_type='application/json')
     profile1 = Profile.objects.first()
@@ -93,7 +86,7 @@ def test_patch_profile(client, create_profiles):
 
     # Changing profile2 currently empty field
     client.patch(
-        '/api/profiles/{}/'.format(profile2.id),
+        '/api/profiles/{}/'.format(profile2.user_id),
         data=json.dumps({'phone': '9491234567'}),
         content_type='application/json')
     profile2 = Profile.objects.all()[1]

@@ -51,7 +51,7 @@ def test_post_memberships(client, create_calendars, create_profiles):
     mbship1_data = {
         'color_hex': '000000',
         'calendar': '/api/calendars/{}/'.format(cal1.id),
-        'member': '/api/profiles/{}/'.format(incomplete_profile.id)}
+        'member': '/api/profiles/{}/'.format(incomplete_profile.user_id)}
     response1 = client.post('/api/memberships/', mbship1_data)
     assert response1.status_code == 201
     assert Membership.objects.count() == 1
@@ -59,7 +59,7 @@ def test_post_memberships(client, create_calendars, create_profiles):
     mbship2_data = {
         'color_hex': 'FFFFFF',
         'calendar': '/api/calendars/{}/'.format(cal2.id),
-        'member': '/api/profiles/{}/'.format(complete_profile.id)}
+        'member': '/api/profiles/{}/'.format(complete_profile.user_id)}
     response2 = client.post('/api/memberships/', mbship2_data)
     assert response2.status_code == 201
     assert Membership.objects.count() == 2
@@ -98,7 +98,7 @@ def test_patch_membership(client, create_memberships):
 def test_cannot_use_repeated_color_in_one_calendar(client, create_memberships):
     # try to create another Membership instance with same color_hex and calendar
     cal1_id = Calendar.objects.first().id
-    complete_profile_id = Profile.objects.first().id
+    complete_profile_id = Profile.objects.first().user_id
     mbship1_data = {
         'color_hex': '000000',
         'calendar': '/api/calendars/{}/'.format(cal1_id),
