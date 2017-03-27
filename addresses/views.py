@@ -7,3 +7,6 @@ from .serializers import AddressSerializer
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
