@@ -19,9 +19,10 @@ def test_can_save_and_retrieve_calendars(calendar1, calendar2, create_calendars)
 
 def test_can_add_members_by_creating_membership_instances(normal_user2, create_calendars, create_profiles):
     cal1 = Calendar.objects.first()
-    assert cal1.members.count() == 0
+    # create_calendar simulates view's behavior of autosaving owner/user as member
+    assert cal1.members.count() == 1
 
     Membership.objects.create(
         color_hex='000000', member=normal_user2, calendar=cal1)
-    assert cal1.members.count() == 1
+    assert cal1.members.count() == 2
     assert cal1.members.first() == normal_user2

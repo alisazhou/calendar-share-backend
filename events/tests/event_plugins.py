@@ -40,6 +40,8 @@ def check_event_is_instance(evt_dict, evt_ins, serialized=False):
         check_evt_owner_instance_corresponds_to_serialized_url(evt_ins, owner_url)
         cal_url = evt_dict.pop('calendar')
         check_evt_calendar_instance_corresponds_to_serialized_url(evt_ins, cal_url)
+        # pop the superfluous url field that is just flight id
+        evt_dict.pop('url')
 
     # check the rest of the fields
     for k, v in evt_dict.items():
@@ -48,7 +50,7 @@ def check_event_is_instance(evt_dict, evt_ins, serialized=False):
 
 @pytest.fixture
 def flight1(normal_user1, create_calendars):
-    cal1 = Calendar.objects.first()
+    cal1 = Calendar.objects.get(owner=normal_user1)
     flight_info = {
         'title': 'flight 1', 'owner': normal_user1, 'calendar': cal1,
         'start_at': '2017-03-17 01:00', 'end_at': '2017-03-18 02:00',
@@ -69,7 +71,7 @@ def flight1_for_view(flight1):
 @pytest.fixture
 def flight2(normal_user2, create_calendars):
     # flight 2 only has required fields filled out
-    cal2 = Calendar.objects.all()[1]
+    cal2 = Calendar.objects.get(owner=normal_user2)
     flight_info = {
         'title': 'flight 2', 'owner': normal_user2, 'calendar': cal2,
         'start_at': '2017-03-19 02:00', 'end_at': '2017-03-20 03:00',

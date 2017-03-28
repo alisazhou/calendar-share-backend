@@ -8,7 +8,6 @@ class AbstractEvent(models.Model):
     title = models.CharField(max_length=100, verbose_name='Title')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='+',
         on_delete=models.CASCADE,
         verbose_name='Created by')
     calendar = models.ForeignKey(
