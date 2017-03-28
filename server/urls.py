@@ -28,7 +28,7 @@ router = DefaultRouter()
 router.register(r'addresses', AddressViewSet, 'address')
 router.register(r'calendars', CalendarViewSet)
 router.register(r'flights', FlightViewSet)
-router.register(r'memberships', MembershipViewSet)
+router.register(r'memberships', MembershipViewSet, 'membership')
 router.register(r'plans', PlanViewSet)
 router.register(r'profiles', ProfileViewSet, 'profile')
 
