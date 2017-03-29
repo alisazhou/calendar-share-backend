@@ -48,9 +48,8 @@ class FlightSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PlanSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.HyperlinkedRelatedField(
-        view_name='profile-detail',
-        read_only='true')
+    calendar = CalendarPostField(view_name='calendar-detail')
+    owner = serializers.HyperlinkedRelatedField(view_name='profile-detail', read_only='true')
 
     class Meta:
         model = Plan

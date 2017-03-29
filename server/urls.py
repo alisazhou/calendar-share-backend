@@ -29,7 +29,7 @@ router.register(r'addresses', AddressViewSet, 'address')
 router.register(r'calendars', CalendarViewSet)
 router.register(r'flights', FlightViewSet, 'flight')
 router.register(r'memberships', MembershipViewSet, 'membership')
-router.register(r'plans', PlanViewSet)
+router.register(r'plans', PlanViewSet, 'plan')
 router.register(r'profiles', ProfileViewSet, 'profile')
 
 

@@ -102,7 +102,7 @@ def create_flights(flight1, flight2):
 
 @pytest.fixture
 def plan1(normal_user1, create_calendars):
-    cal1 = Calendar.objects.first()
+    cal1 = Calendar.objects.get(owner=normal_user1)
     plan_info = {
         'title': 'plan 1', 'owner': normal_user1, 'calendar': cal1,
         'start_at': '2017-04-17 01:00', 'end_at': '2017-04-18 02:00',
@@ -112,8 +112,7 @@ def plan1(normal_user1, create_calendars):
 
 @pytest.fixture
 def plan1_for_view(plan1):
-    owner_id = plan1['owner'].id
-    plan1['owner'] = '/api/profiles/{}/'.format(owner_id)
+    plan1.pop('owner')
     cal1_id = plan1['calendar'].id
     plan1['calendar'] = '/api/calendars/{}/'.format(cal1_id)
     return plan1
@@ -121,7 +120,7 @@ def plan1_for_view(plan1):
 
 @pytest.fixture
 def plan2(normal_user2, create_calendars):
-    cal2 = Calendar.objects.first()
+    cal2 = Calendar.objects.get(owner=normal_user2)
     plan_info = {
         'title': 'plan 2', 'owner': normal_user2, 'calendar': cal2,
         'start_at': '2017-04-19 02:00', 'end_at': '2017-04-20 03:00',
@@ -131,8 +130,7 @@ def plan2(normal_user2, create_calendars):
 
 @pytest.fixture
 def plan2_for_view(plan2):
-    owner_id = plan2['owner'].id
-    plan2['owner'] = '/api/profiles/{}/'.format(owner_id)
+    plan2.pop('owner')
     cal2_id = plan2['calendar'].id
     plan2['calendar'] = '/api/calendars/{}/'.format(cal2_id)
     return plan2
