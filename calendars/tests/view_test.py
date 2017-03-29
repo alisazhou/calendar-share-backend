@@ -17,44 +17,84 @@ def check_calendar_is_instance(cal_dict, cal_instance):
         assert filter(url_regex, cal_dict['members'])
 
 
-def test_get_calendars_list(client, create_calendars, create_memberships):
+def test_get_calendars_list(client, create_calendars):
+    cal1 = Calendar.objects.get(owner__username='user1')
+    cal2 = Calendar.objects.get(owner__username='user2')
+
+    # anon user gets 403
+    response = client.get('/api/calendars/{}/'.format(cal1.id))
+    assert response.status_code == 403
+
+    # login as user1, gets 200, can get own calendar
+    client.login(username='user1', password='qwerty123')
     response = client.get('/api/calendars/')
     assert response.status_code == 200
-
     calendars_json = json.loads(response.content.decode())
-    assert len(calendars_json) == 2
-
-    cal1, cal2 = Calendar.objects.all()
+    # user1 is the only member to cal1
+    assert len(calendars_json) == 1
     check_calendar_is_instance(calendars_json[0], cal1)
-    check_calendar_is_instance(calendars_json[1], cal2)
+
+    # login as user2, gets 200, can get own calendar
+    client.logout()
+    client.login(username='user2', password='qwerty123')
+    response = client.get('/api/calendars/')
+    assert response.status_code == 200
+    calendars_json = json.loads(response.content.decode())
+    # user2 is the only member to cal2
+    assert len(calendars_json) == 1
+    check_calendar_is_instance(calendars_json[0], cal2)
 
 
 def test_get_calendar_by_id(client, create_calendars):
-    cal1, cal2 = Calendar.objects.all()
+    cal1 = Calendar.objects.get(owner__username='user1')
+    cal2 = Calendar.objects.get(owner__username='user2')
 
-    response1 = client.get('/api/calendars/{}/'.format(cal1.id))
-    assert response1.status_code == 200
-    cal_json1 = json.loads(response1.content.decode())
+    # anon user gets 403
+    response = client.get('/api/calendars/{}/'.format(cal1.id))
+    assert response.status_code == 403
+
+    # login as user1, gets 200, can get own calendar
+    client.login(username='user1', password='qwerty123')
+    response = client.get('/api/calendars/{}/'.format(cal1.id))
+    assert response.status_code == 200
+    cal_json1 = json.loads(response.content.decode())
     check_calendar_is_instance(cal_json1, cal1)
+    # cannot get user2's calendar
+    response = client.get('/api/calendars/{}/'.format(cal2.id))
+    assert response.status_code == 404
 
-    response2 = client.get('/api/calendars/{}/'.format(cal2.id))
-    assert response2.status_code == 200
-    cal_json2 = json.loads(response2.content.decode())
+    # login as user2, gets 200, can get own calendar
+    client.logout()
+    client.login(username='user2', password='qwerty123')
+    response = client.get('/api/calendars/{}/'.format(cal2.id))
+    assert response.status_code == 200
+    cal_json2 = json.loads(response.content.decode())
     check_calendar_is_instance(cal_json2, cal2)
+    # cannot get user1's calendar
+    response = client.get('/api/calendars/{}/'.format(cal1.id))
+    assert response.status_code == 404
 
 
 def test_post_calendars(client, create_profiles):
+    cal3_info = {'title': 'calendar 3 for view', 'owner_color_hex': '000000'}
+
+    # anon user gets 403
+    response = client.post('/api/calendars/', cal3_info)
+    assert response.status_code == 403
+
+    # login as user1, gets 200, can post
     client.login(username='user1', password='qwerty123')
     cal3_info = {'title': 'calendar 3 for view', 'owner_color_hex': '000000'}
-    # view captures the logged-in user creating this calendar as its owner
-    response1 = client.post('/api/calendars/', cal3_info)
-    assert response1.status_code == 201
+    response = client.post('/api/calendars/', cal3_info)
+    assert response.status_code == 201
     assert Calendar.objects.count() == 1
+
     # a membership of owner and calendar is auto saved
     mbship1 = Membership.objects.get(color_hex='000000')
     assert mbship1.calendar.title == 'calendar 3 for view'
     assert mbship1.member.username == 'user1'
 
+    # login as user2
     client.logout()
     client.login(username='user2', password='qwerty123')
     cal4_info = {'title': 'calendar 4 for view', 'owner_color_hex': 'FFFFFF'}
@@ -68,24 +108,56 @@ def test_post_calendars(client, create_profiles):
 
 
 def test_delete_calendars(client, create_calendars):
-    cal1, cal2 = Calendar.objects.all()
+    cal1 = Calendar.objects.get(owner__username='user1')
+    cal2 = Calendar.objects.get(owner__username='user2')
 
-    client.delete('/api/calendars/{}/'.format(cal1.id))
+    # anon user gets 403
+    response = client.delete('/api/calendars/{}/'.format(cal1.id))
+    assert response.status_code == 403
+    assert Calendar.objects.count() == 2
+
+    # login as user1 gets 200
+    client.login(username='user1', password='qwerty123')
+    response = client.delete('/api/calendars/{}/'.format(cal1.id))
+    assert response.status_code == 204
     assert Calendar.objects.count() == 1
+    # cannot delete user2's calendar
+    response = client.delete('/api/calendars/{}/'.format(cal2.id))
+    assert response.status_code == 404
 
-    client.delete('/api/calendars/{}/'.format(cal2.id))
+    # login as user1 gets 200
+    client.logout()
+    client.login(username='user2', password='qwerty123')
+    response = client.delete('/api/calendars/{}/'.format(cal2.id))
+    assert response.status_code == 204
     assert Calendar.objects.count() == 0
 
 
 def test_patch_calendars(client, create_calendars):
-    cal1 = Calendar.objects.first()
-    orig_owner = cal1.owner
+    cal1 = Calendar.objects.get(owner__username='user1')
 
+    # anon user gets 403
+    response = client.patch(
+        '/api/calendars/{}/'.format(cal1.id),
+        data=json.dumps({'title': 'changed title'}),
+        content_type='application/json')
+    assert response.status_code == 403
+
+    # login as user1 gets 200
+    client.login(username='user1', password='qwerty123')
     response = client.patch(
         '/api/calendars/{}/'.format(cal1.id),
         data=json.dumps({'title': 'changed title'}),
         content_type='application/json')
     assert response.status_code == 200
-    cal1 = Calendar.objects.first()
+    cal1 = Calendar.objects.get(owner__username='user1')
     assert cal1.title == 'changed title'
-    assert cal1.owner == orig_owner
+    # cannot patch user2's calendar
+    cal2 = Calendar.objects.get(owner__username='user2')
+    response = client.patch(
+        '/api/calendars/{}/'.format(cal2.id),
+        data=json.dumps({'title': 'changed title'}),
+        content_type='application/json')
+    assert response.status_code == 404
+    cal1 = Calendar.objects.get(owner__username='user2')
+    assert cal1.title == 'calendar 2'

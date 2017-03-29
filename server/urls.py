@@ -26,7 +26,7 @@ from profiles.views import ProfileViewSet
 
 router = DefaultRouter()
 router.register(r'addresses', AddressViewSet, 'address')
-router.register(r'calendars', CalendarViewSet)
+router.register(r'calendars', CalendarViewSet, 'calendar')
 router.register(r'flights', FlightViewSet, 'flight')
 router.register(r'memberships', MembershipViewSet, 'membership')
 router.register(r'plans', PlanViewSet, 'plan')
