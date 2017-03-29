@@ -34,4 +34,4 @@ def create_calendars(calendar1, calendar2, normal_user1, normal_user2):
         owner=calendar2['owner'])
     # imitate view behavior of autosaving self membership
     Membership.objects.create(
-        color_hex='111111', calendar=cal2, member=normal_user2)
+        color_hex='222222', calendar=cal2, member=normal_user2)

@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 import json
 
 from calendars.models import Calendar
@@ -18,7 +19,7 @@ def check_mbship_dict_is_instance(mbship_dict, mbship_instance):
     assert '/api/profiles/{}/'.format(member_id) in mbship_dict['member']
 
 
-def test_get_memberships_list(admin_client, client, create_memberships):
+def test_get_memberships_list(admin_client, client, create_calendars):
     # anon user gets 403
     response = client.get('/api/memberships/')
     assert response.status_code == 403
@@ -54,7 +55,7 @@ def test_get_memberships_list(admin_client, client, create_memberships):
 
 
 def test_get_membership_by_id(
-        admin_client, client, normal_user1, normal_user2, create_memberships):
+        admin_client, client, normal_user1, normal_user2, create_calendars):
     saved_mbship1 = Membership.objects.get(member_id=normal_user1.id)
     saved_mbship2 = Membership.objects.get(member_id=normal_user2.id)
 
@@ -111,7 +112,7 @@ def test_post_memberships(client, create_calendars, create_profiles):
     client.login(username='user1', password='qwerty123')
     response = client.post('/api/memberships/', mbship1_data)
     assert response.status_code == 201
-    assert Membership.objects.count() == 1
+    assert Membership.objects.count() == 3    # already 2 from create_calendars
     # but cannot post membership with calendar owned by normal_user2
     response = client.post('/api/memberships/', mbship2_data)
     assert response.status_code == 400    # cal2 not in queryset
@@ -121,13 +122,13 @@ def test_post_memberships(client, create_calendars, create_profiles):
     client.login(username='user2', password='qwerty123')
     response = client.post('/api/memberships/', mbship2_data)
     assert response.status_code == 201
-    assert Membership.objects.count() == 2
+    assert Membership.objects.count() == 4
     # but cannot post membership with calendar owned by normal_user2
     response = client.post('/api/memberships/', mbship1_data)
     assert response.status_code == 400    # cal1 not in queryset
 
 
-def test_delete_memberships(client, normal_user1, normal_user2, create_memberships):
+def test_delete_memberships(client, normal_user1, normal_user2, create_calendars):
     mbship1 = Membership.objects.get(member_id=normal_user1.id)
     mbship2 = Membership.objects.get(member_id=normal_user2.id)
 
@@ -152,7 +153,7 @@ def test_delete_memberships(client, normal_user1, normal_user2, create_membershi
     assert Membership.objects.count() == 0
 
 
-def test_patch_membership(client, normal_user1, normal_user2, create_memberships):
+def test_patch_membership(client, normal_user1, normal_user2, create_calendars):
     mbship1 = Membership.objects.get(member_id=normal_user1.id)
     mbship2 = Membership.objects.get(member_id=normal_user2.id)
 
@@ -167,30 +168,33 @@ def test_patch_membership(client, normal_user1, normal_user2, create_memberships
     client.login(username='user1', password='qwerty123')
     response = client.patch(
         '/api/memberships/{}/'.format(mbship1.id),
-        data=json.dumps({'color_hex': '111111'}),
+        data=json.dumps({'color_hex': '11111F'}),
         content_type='application/json')
     assert response.status_code == 200
     mbship1 = Membership.objects.get(member_id=normal_user1.id)
-    assert mbship1.color_hex == '111111'
+    assert mbship1.color_hex == '11111F'
     # still cannot patch to normal_user2's membership
     response = client.patch(
         '/api/memberships/{}/'.format(mbship2.id),
-        data=json.dumps({'color_hex': 'EEEEEE'}),
+        data=json.dumps({'color_hex': '22222F'}),
         content_type='application/json')
     assert response.status_code == 404
 
 
-def test_cannot_use_repeated_color_in_one_calendar(client, create_memberships):
+def test_cannot_use_repeated_color_in_one_calendar(client, create_calendars):
     # try to create another Membership instance with same color_hex and calendar
-    cal1_id = Calendar.objects.first().id
-    complete_profile_id = Profile.objects.first().user_id
+    User = get_user_model()
+    # user2 is already a member of calendar2 with color 222222
+    cal2_id = Calendar.objects.get(owner__username='user2').id
+    user1_id = User.objects.get(username='user1').id
     mbship1_data = {
-        'color_hex': '000000',
-        'calendar': '/api/calendars/{}/'.format(cal1_id),
-        'member': '/api/profiles/{}/'.format(complete_profile_id)}
+        'color_hex': '222222',
+        'calendar': '/api/calendars/{}/'.format(cal2_id),
+        'member': '/api/profiles/{}/'.format(user1_id)}
 
-    # login as normal_user1
-    client.login(username='user1', password='qwerty123')
+    # login as normal_user2, as only existing members can add new members
+    client.login(username='user2', password='qwerty123')
+    print(mbship1_data['calendar'])
     response = client.post('/api/memberships/', mbship1_data)
     assert response.status_code == 400
     err_msg = json.loads(response.content.decode())

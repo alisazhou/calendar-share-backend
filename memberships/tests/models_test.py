@@ -1,25 +1,20 @@
 
 from calendars.models import Calendar
 from memberships.models import Membership
-from profiles.models import Profile
 
 
-def test_can_save_and_retrieve_memberships(create_memberships):
+def test_can_save_and_retrieve_memberships(create_calendars):
     saved_memberships = Membership.objects.all()
-    cal1, cal2 = Calendar.objects.all()
-    complete_profile, incomplete_profile = Profile.objects.all()
     assert len(saved_memberships) == 2
 
-    # First membership is created with calendar1 and incomplete_profile
-    membership1 = saved_memberships[0]
-    assert membership1.calendar_id == cal1.id
-    assert membership1.member_id == incomplete_profile.user_id
-    # check now calendar1 has incomplete_profile as a member
-    assert incomplete_profile.user in cal1.members.all()
+    # First membership is created with calendar1 and normal_user1
+    mbship1 = Membership.objects.get(member__username='user1')
+    cal1 = Calendar.objects.get(owner__username='user1')
+    assert mbship1.calendar == cal1
+    assert mbship1.member in cal1.members.all()
 
-    # second membership is created with calendar2 and complete_profile
-    membership2 = saved_memberships[1]
-    assert membership2.calendar_id == cal2.id
-    assert membership2.member_id == complete_profile.user_id
-    # check now calendar2 has complete_profile as a member
-    assert complete_profile.user in cal2.members.all()
+    # second membership is created with calendar2 and normal_user2
+    mbship2 = Membership.objects.get(member__username='user2')
+    cal2 = Calendar.objects.get(owner__username='user2')
+    assert mbship2.calendar == cal2
+    assert mbship2.member in cal2.members.all()
