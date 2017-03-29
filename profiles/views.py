@@ -2,8 +2,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import Profile
-from .permissions import IsOwnUserOrAdmin
 from .serializers import ProfileSerializer
+from common.permissions import IsOwnUserOrAdmin
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
