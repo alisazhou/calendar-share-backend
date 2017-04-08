@@ -13,7 +13,7 @@ class CalendarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Calendar
-        fields = ('owner', 'owner_color_hex', 'members', 'title', 'url')
+        fields = ('id', 'owner', 'owner_color_hex', 'members', 'title', 'url')
 
     def create(self, validated_data):
         owner_color_hex = validated_data.pop('owner_color_hex')
