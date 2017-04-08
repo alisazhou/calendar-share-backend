@@ -9,8 +9,8 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     email = serializers.EmailField(source='user.email')
     password = serializers.CharField(
         source='user.password', min_length=6, write_only=True)
-    first_name = serializers.CharField(source='user.first_name')
-    last_name = serializers.CharField(source='user.last_name')
+    first_name = serializers.CharField(source='user.first_name', required=False)
+    last_name = serializers.CharField(source='user.last_name', required=False)
 
     class Meta:
         model = Profile
