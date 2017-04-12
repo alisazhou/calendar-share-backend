@@ -7,7 +7,7 @@ from memberships.models import Membership
 class CalendarSerializer(serializers.ModelSerializer):
     owner = serializers.HyperlinkedRelatedField(
         view_name='profile-detail', read_only=True)
-    owner_color_hex = serializers.CharField(max_length=6, write_only=True)
+    owner_color_hex = serializers.CharField(max_length=7, write_only=True)
     members = serializers.HyperlinkedRelatedField(
         view_name='profile-detail', many=True, read_only=True)
 
